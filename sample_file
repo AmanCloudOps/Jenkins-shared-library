@@ -1,0 +1,29 @@
+@Library('Shared')_
+pipeline{
+    agent {label 'agent-server'}
+    stages{
+        stage("code clone"){
+            steps{
+                clone("https://github.com/AmanCloudOps/django-notes-app.git", "main")
+            }
+        }
+        
+        stage("Build Image"){
+            steps{
+                buildImage("notes-application", "latest", "amankumar19")
+            }
+        }
+        
+        stage("Push to dockerHub"){
+            steps{
+                pushImage("notes-application", "latest", "amankumar19")
+            }
+        }
+        
+        stage("Deploy"){
+            steps{
+                sh "docker compose down && docker compose up -d"
+            }
+        }
+    }
+}
